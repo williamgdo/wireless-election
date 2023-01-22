@@ -1,23 +1,45 @@
 # node A 
 # neighbors: B, J
 
-import pickle, socket, threading, time
+import pickle, socket, threading, time, sys
 
 def sendMsgForNeighbors(msg):
     for neighbor in process.neighbors:
         if neighbor[0] != process.parent:
             process.socket.sendto(pickle.dumps(msg),("localhost", neighbor[0]))
 
+def parse_input(arg):
+    file = open(arg + ".in", "r") 
+    line = file.readline()
+    line = line.split()
+    node_id = line[0]
+    node_port = int(line[1])
+    line = file.readline()
+    capacity = int(line)
+    line = file.readline()
+    line = line.split()
+    neighbours = []
+    for port in line:
+        neighbours.append((int(port), -1))
+
+    return (node_id, node_port, capacity, neighbours)  
+
 class Process:
-    port = 22008
-    capacity = 8
-    neighbors = [(12007, -1),(12009, -1)] # ([port, capacity])
+    port = 22001
+    capacity = 4
+    neighbors = [(22002, -1), (22010, -1)] # ([port, capacity])
     parent = ""
     leader = ""
     socket = ""
     acks = 0
     election = -1
     bestCapacity = {"port": 0, "capacity": 0}
+
+    def __init__(self, arg):
+        self.port = arg[1]
+        self.capacity = arg[2]
+        self.neighbours = arg[3]
+    
 
 def worker(message):
         while True:
@@ -85,7 +107,8 @@ def worker(message):
             
 
 if __name__ == "__main__":
-    process = Process()
+    process_arg = parse_input(sys.argv[1])
+    process = Process(process_arg)
 
     process.socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
     #process.server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
