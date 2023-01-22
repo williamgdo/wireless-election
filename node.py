@@ -1,6 +1,3 @@
-# node A 
-# neighbors: B, J
-
 import pickle, socket, threading, time, sys
 
 def sendMsgForNeighbors(msg):
@@ -63,26 +60,26 @@ def worker(message):
                 }
                 process.socket.sendto(pickle.dumps(msgOK),("localhost", sender[1]))
             elif rcvMsg["type"] == "lider" and process.leader == "":
-                print("novo lider: " + str(rcvMsg["remetente"]["porta"]) + " capacity: " + str(rcvMsg["remetente"]["capacity"]) )
+                print("novo lider: " + str(rcvMsg["remetente"]["port"]) + " capacity: " + str(rcvMsg["remetente"]["capacity"]) )
                 sendMsgForNeighbors(rcvMsg)
                 process.parent = ""
-                process.leader = rcvMsg["remetente"]["porta"]
+                process.leader = rcvMsg["remetente"]["port"]
             elif rcvMsg["type"] == "ack": #reconhecimento dos nós vizinhos
                 process.acks += 1
                 if rcvMsg["remetente"]["capacity"] > process.bestCapacity["capacity"]:
                     process.bestCapacity["capacity"] = rcvMsg["remetente"]["capacity"]
-                    process.bestCapacity["porta"] = rcvMsg["remetente"]["porta"]
-                elif rcvMsg["remetente"]["capacity"] == process.bestCapacity["capacity"] and rcvMsg["remetente"]["porta"] > process.bestCapacity["porta"]:
+                    process.bestCapacity["port"] = rcvMsg["remetente"]["port"]
+                elif rcvMsg["remetente"]["capacity"] == process.bestCapacity["capacity"] and rcvMsg["remetente"]["port"] > process.bestCapacity["port"]:
                     process.bestCapacity["capacity"] = rcvMsg["remetente"]["capacity"]
-                    process.bestCapacity["porta"] = rcvMsg["remetente"]["porta"]
+                    process.bestCapacity["port"] = rcvMsg["remetente"]["port"]
 
             if process.acks == (len(process.neighbors)) and process.election != -1: #recebeu todas confirmacoes
                 
                 if process.capacity > process.bestCapacity["capacity"]:
-                    process.bestCapacity["porta"] = process.port #salva porta
+                    process.bestCapacity["port"] = process.port #salva port
                     process.bestCapacity["capacity"] = process.capacity #salvar capacity
-                elif process.capacity == process.bestCapacity["capacity"] and process.port > process.bestCapacity["porta"]:
-                    process.bestCapacity["porta"] = process.port
+                elif process.capacity == process.bestCapacity["capacity"] and process.port > process.bestCapacity["port"]:
+                    process.bestCapacity["port"] = process.port
                     process.bestCapacity["capacity"] = process.capacity
 
                 if process.parent == "": #if para identificar nó que iniciou a eleicao
@@ -90,7 +87,7 @@ def worker(message):
                         "type": "lider",
                         "remetente": process.bestCapacity
                     }
-                    process.leader = process.bestCapacity["porta"]
+                    process.leader = process.bestCapacity["port"]
                     sendMsgForNeighbors(msgLider)
                 else: #retorna para o pai a melhor capacity
                     msgOK = {
@@ -103,7 +100,7 @@ def worker(message):
                 process.acks = 0
                 process.election = -1
                 process.bestCapacity["capacity"]=0
-                process.bestCapacity["porta"]=0  
+                process.bestCapacity["port"]=0  
             
 
 if __name__ == "__main__":
