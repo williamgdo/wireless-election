@@ -14,7 +14,7 @@ if __name__ == "__main__":
         else:
             pid_list.append(pid)
 
-        num += 1
+        num_proc += 1
         letter += 1
 
 
