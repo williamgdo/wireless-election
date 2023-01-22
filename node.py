@@ -117,6 +117,8 @@ if __name__ == "__main__":
     t = threading.Thread(target=worker,args=("thread sendo executada",))
     t.start()
 
+
+    print("Node_id: " + sys.argv[1])
     while True:
         #try:
             mensagem_envio = input("Iniciar eleicao:")
