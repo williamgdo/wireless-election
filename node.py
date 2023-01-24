@@ -1,4 +1,4 @@
-import pickle, socket, threading, time, sys
+import pickle, socket, threading, time, sys, random
 
 def sendMsgForNeighbors(msg):
     for neighbor in process.neighbours:
@@ -50,6 +50,8 @@ def worker(message):
                 process.election = rcvMsg["id"]
                 process.parent = sender[1]
                 process.acks = 1 #reduz a qtd de oks pq nao precisa receber do pai
+
+                time.sleep(random.randint(1, 5)) 
                 sendMsgForNeighbors(rcvMsg)
               elif rcvMsg["id"] == process.election:
                 msgOK = {
@@ -59,6 +61,8 @@ def worker(message):
                 process.socket.sendto(pickle.dumps(msgOK),("localhost", sender[1]))
             elif rcvMsg["type"] == "lider" and process.leader == "":
                 print("novo lider: " + str(rcvMsg["remetente"]["port"]) + " capacity: " + str(rcvMsg["remetente"]["capacity"]) )
+
+                time.sleep(random.randint(1, 5)) 
                 sendMsgForNeighbors(rcvMsg)
                 process.parent = ""
                 process.leader = rcvMsg["remetente"]["port"]
@@ -86,6 +90,8 @@ def worker(message):
                         "remetente": process.bestCapacity
                     }
                     process.leader = process.bestCapacity["port"]
+
+                    time.sleep(random.randint(1, 5)) 
                     sendMsgForNeighbors(msgLider)
                 else: #retorna para o pai a melhor capacity
                     msgOK = {
@@ -113,6 +119,7 @@ if __name__ == "__main__":
     t.start()
 
 
+    random.seed()
     print("Node_id: " + sys.argv[1])
     while True:
         #try:
@@ -122,4 +129,6 @@ if __name__ == "__main__":
                 "id": process.port,
             }
             process.election = process.port
+
+            time.sleep(random.randint(1, 5)) 
             sendMsgForNeighbors(msg)
