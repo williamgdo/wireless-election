@@ -1,7 +1,7 @@
 import pickle, socket, threading, time, sys
 
 def sendMsgForNeighbors(msg):
-    for neighbor in process.neighbors:
+    for neighbor in process.neighbours:
         if neighbor[0] != process.parent:
             process.socket.sendto(pickle.dumps(msg),("localhost", neighbor[0]))
 
@@ -22,9 +22,6 @@ def parse_input(arg):
     return (node_id, node_port, capacity, neighbours)  
 
 class Process:
-    port = 22001
-    capacity = 4
-    neighbors = [(22002, -1), (22010, -1)] # ([port, capacity])
     parent = ""
     leader = ""
     socket = ""
@@ -33,6 +30,7 @@ class Process:
     bestCapacity = {"port": 0, "capacity": 0}
 
     def __init__(self, arg):
+        self.id = arg[0]
         self.port = arg[1]
         self.capacity = arg[2]
         self.neighbours = arg[3]
@@ -73,7 +71,7 @@ def worker(message):
                     process.bestCapacity["capacity"] = rcvMsg["remetente"]["capacity"]
                     process.bestCapacity["port"] = rcvMsg["remetente"]["port"]
 
-            if process.acks == (len(process.neighbors)) and process.election != -1: #recebeu todas confirmacoes
+            if process.acks == (len(process.neighbours)) and process.election != -1: #recebeu todas confirmacoes
                 
                 if process.capacity > process.bestCapacity["capacity"]:
                     process.bestCapacity["port"] = process.port #salva port
