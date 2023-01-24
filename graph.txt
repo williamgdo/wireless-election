@@ -1,0 +1,13 @@
+# Lista de adjacências do grafo
+
+A -> B, J
+B -> A, C, G
+C -> B, D, E
+D -> C, E, F
+E -> C, D, F, G
+F -> D, E, I
+G -> B, E, H, J
+H -> G, I 
+I -> F, H
+J -> A, G
+
